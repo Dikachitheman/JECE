@@ -40,7 +40,7 @@ router.get('/users', authMiddleware, async (req, res) => {
   
 // Create or Update agency profile
 router.post('/create', authMiddleware, async (req, res) => {
-    const { name, address, contact } = req.body;
+    const { name, address, contact, industry } = req.body;
     console.log(req.body)
     console.log(name, address, contact)
     const owner = req.user.id;
@@ -55,7 +55,7 @@ router.post('/create', authMiddleware, async (req, res) => {
             agency.contact = contact;
             await agency.save();
         } else {
-            agency = new Agency({ name, address, contact, owner });
+            agency = new Agency({ name, address, contact, owner, industry });
             await agency.save();
         }
         res.status(200).json(agency);
@@ -90,10 +90,16 @@ router.get('/all', authMiddleware, async (req, res) => {
 
 router.put('/update/:id', authMiddleware, async (req, res) => {
     // if (req.user.role !== 'admin') return res.status(403).json({ message: 'Access denied' });
-
+    console.log(req.params.id)
+    console.log(req.body)
     try {
-        const { name, address, contact, businessHours } = req.body;
-        const agency = await Agency.findByIdAndUpdate(req.params.id, { name, address, contact, businessHours }, { new: true });
+        const { name, address, contact, industry } = req.body;
+        const agency = await Agency.findByIdAndUpdate(req.params.id, { name, address, contact, industry }, { new: true });
+        if (!agency) {
+            return res.status(404).json({ message: 'Agency not found.' });
+        } else {
+            console.log("agency found")
+        }
         res.json(agency);
     } catch (error) {
         res.status(500).json({ error: error.message });

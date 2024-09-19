@@ -6,6 +6,7 @@ const agencySchema = new Schema({
     address: { type: String },
     contact: { type: String },
     owner: { type: Schema.Types.ObjectId, ref: 'User' },
+    industry: {type: String },
     projects: [{
       title: String,
       description: String
